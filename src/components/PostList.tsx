@@ -1,33 +1,62 @@
 import Post from "./Post.tsx";
-import NewPost from "./NewPost.tsx";
 import classes from "./PostList.module.css";
-import { ChangeEvent, useState } from "react";
-import Modal from "./Modal.tsx";
+import { useEffect, useState } from "react";
 
-function PostList({ isPosting, onClose }: { isPosting: boolean; onClose: () => void }) {
-  const [enteredBody, setEnteredBody] = useState("");
-  const [enteredAuthor, setEnteredAuthor] = useState("");
+function PostList() {
+  const [posts, setPosts] = useState<{ body: string; author: string }[]>([]);
+  const [isFetching, setIsFetching] = useState(false);
 
-  const bodyChangeHandler = (event: ChangeEvent<HTMLTextAreaElement>) => {
-    setEnteredBody(event.target.value);
-  };
+  useEffect(() => {
+    const fetchPosts = async () => {
+      setIsFetching(true);
+      const response = await fetch(`http://localhost:8080/posts`);
+      const resData = await response.json();
+      setPosts(resData.posts);
+      setIsFetching(false);
+    };
 
-  const authorChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
-    setEnteredAuthor(event.target.value);
+    fetchPosts();
+  }, []);
+
+  const addPostHandler = (postData: { body: string; author: string }) => {
+    fetch(`http://localhost:8080/posts`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(postData),
+    });
+
+    // 이전 상태를 기반으로 상태를 변경할 때는 리액트 내부에서 상태 갱신 함수를 바로 실행하는게 아니라 다음과 같이 사용
+    // (X) [postData, ...existingPosts]
+    // (O) ((existingPosts) => [postData, ...existingPosts]) ==> 잘못된 상태 갱신 방지
+    setPosts((existingPosts: { body: string; author: string }[]) => [postData, ...existingPosts]);
   };
 
   return (
     <>
-      {isPosting && (
+      {/*{isPosting && (
         <Modal onClose={onClose}>
-          <NewPost onBodyChange={bodyChangeHandler} onAuthorChange={authorChangeHandler} />
+          <NewPost onCancel={onClose} onAddPost={addPostHandler} />
         </Modal>
-      )}
+      )}*/}
 
-      <ul className={classes.posts}>
-        <Post author={enteredAuthor} body={enteredBody} />
-        <Post author="Manuel" body={enteredBody} />
-      </ul>
+      {isFetching ? (
+        <div style={{ textAlign: "center", color: "white" }}>
+          <p>Loading posts...</p>
+        </div>
+      ) : posts.length > 0 ? (
+        <ul className={classes.posts}>
+          {posts.map((post, index) => (
+            <Post key={index} author={post.author} body={post.body} />
+          ))}
+        </ul>
+      ) : (
+        <div style={{ textAlign: "center", color: "white" }}>
+          <h2>There are no posts yet.</h2>
+          <p>Start adding some!</p>
+        </div>
+      )}
     </>
   );
 }
