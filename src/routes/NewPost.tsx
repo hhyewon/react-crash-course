@@ -2,49 +2,53 @@ import classes from "./NewPost.module.css";
 import { ChangeEvent, FormEvent, useState } from "react";
 import Modal from "../components/Modal.tsx";
 
-function NewPost(props: { onCancel?: () => void; onAddPost?: (postData: { body: string; author: string }) => void }) {
-  const [enteredBody, setEnteredBody] = useState("");
-  const [enteredAuthor, setEnteredAuthor] = useState("");
+function NewPost(props: {
+    onCancel?: () => void;
+    onAddPost?: (postData: { body: string; author: string }) => void;
+}) {
+    const [enteredBody, setEnteredBody] = useState("");
+    const [enteredAuthor, setEnteredAuthor] = useState("");
 
-  const bodyChangeHandler = (event: ChangeEvent<HTMLTextAreaElement>) => {
-    setEnteredBody(event.target.value);
-  };
-
-  const authorChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
-    setEnteredAuthor(event.target.value);
-  };
-
-  const submitHandler = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const postData: { body: string; author: string } = {
-      body: enteredBody,
-      author: enteredAuthor,
+    const bodyChangeHandler = (event: ChangeEvent<HTMLTextAreaElement>) => {
+        setEnteredBody(event.target.value);
     };
-    props.onAddPost?.(postData);
-    props.onCancel?.();
-  };
 
-  return (
-    <>
-      <Modal onClose={} />
-      <form className={classes.form} onSubmit={submitHandler}>
-        <p>
-          <label htmlFor="body">Text</label>
-          <textarea id="body" required rows={3} onChange={bodyChangeHandler} />
-        </p>
-        <p>
-          <label htmlFor="name">Your name</label>
-          <input type="text" id="name" required onChange={authorChangeHandler} />
-        </p>
-        <p className={classes.actions}>
-          <button type="button" onClick={props.onCancel}>
-            Cancel
-          </button>
-          <button>Submit</button>
-        </p>
-      </form>
-    </>
-  );
+    const authorChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
+        setEnteredAuthor(event.target.value);
+    };
+
+    const submitHandler = (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        const postData: { body: string; author: string } = {
+            body: enteredBody,
+            author: enteredAuthor,
+        };
+        props.onAddPost?.(postData);
+        props.onCancel?.();
+    };
+
+    return (
+        <>
+            {/*<Modal />*/}
+            <Modal />
+            <form className={classes.form} onSubmit={submitHandler}>
+                <p>
+                    <label htmlFor="body">Text</label>
+                    <textarea id="body" required rows={3} onChange={bodyChangeHandler} />
+                </p>
+                <p>
+                    <label htmlFor="name">Your name</label>
+                    <input type="text" id="name" required onChange={authorChangeHandler} />
+                </p>
+                <p className={classes.actions}>
+                    <button type="button" onClick={props.onCancel}>
+                        Cancel
+                    </button>
+                    <button>Submit</button>
+                </p>
+            </form>
+        </>
+    );
 }
 
 export default NewPost;
