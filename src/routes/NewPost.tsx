@@ -1,11 +1,11 @@
 import classes from "./NewPost.module.css";
 import { ChangeEvent, FormEvent, useState } from "react";
 import Modal from "../components/Modal.tsx";
+import { Link, useNavigate } from "react-router-dom";
 
-function NewPost(props: {
-    onCancel?: () => void;
-    onAddPost?: (postData: { body: string; author: string }) => void;
-}) {
+function NewPost(props: { onAddPost?: (postData: { body: string; author: string }) => void }) {
+    const navigate = useNavigate();
+
     const [enteredBody, setEnteredBody] = useState("");
     const [enteredAuthor, setEnteredAuthor] = useState("");
 
@@ -24,29 +24,30 @@ function NewPost(props: {
             author: enteredAuthor,
         };
         props.onAddPost?.(postData);
-        props.onCancel?.();
+        navigate("..");
+        // props.onCancel?.();
     };
 
     return (
         <>
-            {/*<Modal />*/}
-            <Modal />
-            <form className={classes.form} onSubmit={submitHandler}>
-                <p>
-                    <label htmlFor="body">Text</label>
-                    <textarea id="body" required rows={3} onChange={bodyChangeHandler} />
-                </p>
-                <p>
-                    <label htmlFor="name">Your name</label>
-                    <input type="text" id="name" required onChange={authorChangeHandler} />
-                </p>
-                <p className={classes.actions}>
-                    <button type="button" onClick={props.onCancel}>
-                        Cancel
-                    </button>
-                    <button>Submit</button>
-                </p>
-            </form>
+            <Modal>
+                <form className={classes.form} onSubmit={submitHandler}>
+                    <p>
+                        <label htmlFor="body">Text</label>
+                        <textarea id="body" required rows={3} onChange={bodyChangeHandler} />
+                    </p>
+                    <p>
+                        <label htmlFor="name">Your name</label>
+                        <input type="text" id="name" required onChange={authorChangeHandler} />
+                    </p>
+                    <p className={classes.actions}>
+                        <Link to=".." type="button">
+                            Cancel
+                        </Link>
+                        <button>Submit</button>
+                    </p>
+                </form>
+            </Modal>
         </>
     );
 }
