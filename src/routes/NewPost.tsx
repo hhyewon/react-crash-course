@@ -1,21 +1,10 @@
 import classes from "./NewPost.module.css";
 import { ChangeEvent, FormEvent, useState } from "react";
 import Modal from "../components/Modal.tsx";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, Form, redirect } from "react-router-dom";
 
-function NewPost(props: { onAddPost?: (postData: { body: string; author: string }) => void }) {
-    const navigate = useNavigate();
-
-    const [enteredBody, setEnteredBody] = useState("");
-    const [enteredAuthor, setEnteredAuthor] = useState("");
-
-    const bodyChangeHandler = (event: ChangeEvent<HTMLTextAreaElement>) => {
-        setEnteredBody(event.target.value);
-    };
-
-    const authorChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
-        setEnteredAuthor(event.target.value);
-    };
+function NewPost() {
+    /*const navigate = useNavigate();
 
     const submitHandler = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -23,22 +12,23 @@ function NewPost(props: { onAddPost?: (postData: { body: string; author: string 
             body: enteredBody,
             author: enteredAuthor,
         };
-        props.onAddPost?.(postData);
+
+        // props.onAddPost?.(postData);
         navigate("..");
         // props.onCancel?.();
-    };
+    };*/
 
     return (
         <>
             <Modal>
-                <form className={classes.form} onSubmit={submitHandler}>
+                <Form method="post" className={classes.form}>
                     <p>
                         <label htmlFor="body">Text</label>
-                        <textarea id="body" required rows={3} onChange={bodyChangeHandler} />
+                        <textarea id="body" name="body" required rows={3} />
                     </p>
                     <p>
                         <label htmlFor="name">Your name</label>
-                        <input type="text" id="name" required onChange={authorChangeHandler} />
+                        <input type="text" name="author" id="name" required />
                     </p>
                     <p className={classes.actions}>
                         <Link to=".." type="button">
@@ -46,10 +36,25 @@ function NewPost(props: { onAddPost?: (postData: { body: string; author: string 
                         </Link>
                         <button>Submit</button>
                     </p>
-                </form>
+                </Form>
             </Modal>
         </>
     );
 }
 
 export default NewPost;
+
+export async function action({ request }) {
+    const formData = await request.formData();
+    const postData = Object.fromEntries(formData);
+    // formData.get("body");
+    await fetch(`http://localhost:8080/posts`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(postData),
+    });
+
+    return redirect("/");
+}
