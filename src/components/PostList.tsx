@@ -3,9 +3,9 @@ import classes from "./PostList.module.css";
 import { useLoaderData } from "react-router-dom";
 
 function PostList() {
-    const posts = useLoaderData();
+  const posts = useLoaderData();
 
-    /* const [posts, setPosts] = useState<{ body: string; author: string }[]>([]);
+  /* const [posts, setPosts] = useState<{ body: string; author: string }[]>([]);
    const [isFetching, setIsFetching] = useState(false);
 
   useEffect(() => {
@@ -20,7 +20,7 @@ function PostList() {
       fetchPosts();
   }, []);*/
 
-    /*const addPostHandler = (postData: { body: string; author: string }) => {
+  /*const addPostHandler = (postData: { body: string; author: string }) => {
         fetch(`http://localhost:8080/posts`, {
             method: "POST",
             headers: {
@@ -38,30 +38,20 @@ function PostList() {
         ]);
     };*/
 
-    return (
-        <>
-            {/*{isPosting && (
-        <Modal onClose={onClose}>
-          <NewPost onCancel={onClose} onAddPost={addPostHandler} />
-        </Modal>
-      )}*/
-            /*<div style={{ textAlign: "center", color: "white" }}>
-                    <p>Loading posts...</p>
-                </div>*/}
-            {posts?.length > 0 ? (
-                <ul className={classes.posts}>
-                    {posts?.map((post, index) => (
-                        <Post key={index} author={post.author} body={post.body} />
-                    ))}
-                </ul>
-            ) : (
-                <div style={{ textAlign: "center", color: "white" }}>
-                    <h2>There are no posts yet.</h2>
-                    <p>Start adding some!</p>
-                </div>
-            )}
-        </>
-    );
+  return (
+    <>
+      {posts?.length > 0 ? (
+        <ul className={classes.posts}>
+          {posts?.map((post) => <Post key={post.id} id={post.id} author={post.author} body={post.body} />)}
+        </ul>
+      ) : (
+        <div style={{ textAlign: "center", color: "white" }}>
+          <h2>There are no posts yet.</h2>
+          <p>Start adding some!</p>
+        </div>
+      )}
+    </>
+  );
 }
 
 export default PostList;
